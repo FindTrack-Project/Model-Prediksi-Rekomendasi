@@ -1,0 +1,7 @@
+tensorflow~=2.16
+pandas~=2.2
+numpy~=1.26
+seaborn~=0.13
+matplotlib~=3.8
+scikit-learn~=1.4
+xgboost~=2.0
