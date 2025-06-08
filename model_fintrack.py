@@ -66,7 +66,9 @@ def predict_next_month_expense(last_n_days_data):
     if len(last_n_days_data) >= 30:
         data_terakhir_30hari = last_n_days_data[-30:]
     else:
-        data_terakhir_30hari = [0] * (30 - len(last_n_days_data)) + last_n_days_data
+        avg = np.mean(last_n_days_data)
+        padding = [avg] * (30 - len(last_n_days_data))
+        data_terakhir_30hari = padding + last_n_days_data
 
     # Scaling dan reshape
     arr = np.array(data_terakhir_30hari).reshape(-1, 1)
