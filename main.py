@@ -14,14 +14,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 
 # --- [0] Set seed untuk hasil yang konsisten ---
-SEED = 50
+SEED = 35
 os.environ['PYTHONHASHSEED'] = str(SEED)
 random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
 # --- [1] Load data ---
-df = pd.read_csv("dataset/data_keuangan_bulanan.csv", sep=';')
+df = pd.read_csv("dataset/data_keuangan_bulanan_extended_fluktuasi4.csv", sep=';')
 df['Tanggal'] = pd.to_datetime(df['Tanggal'], format='%d/%m/%Y')
 df['Jam'] = pd.to_datetime(df['Jam'], format='%H:%M').dt.time
 df['Jumlah'] = df['Jumlah'].astype(float)
@@ -50,11 +50,18 @@ for i in range(0, len(scaled_amounts) - window_size - step + 1, step):
 X, y = np.array(X), np.array(y)
 
 # --- [6] Bangun dan latih model LSTM ---
+from tensorflow.keras.layers import Bidirectional
+
 model = Sequential([
-    LSTM(64, activation='relu', input_shape=(window_size, 1)),
+    Bidirectional(LSTM(64, activation='relu', return_sequences=True, input_shape=(window_size, 1))),
+    Dropout(0.2),
+    Bidirectional(LSTM(32, activation='relu')),
+    Dropout(0.2),
     Dense(1)
 ])
-model.compile(optimizer='adam', loss='mse')
+
+from tensorflow.keras.losses import Huber
+model.compile(optimizer='adam', loss=Huber(delta=1.0))
 model.fit(X, y, epochs=100, verbose=0)
 
 # --- [7] Prediksi total bulanan dan evaluasi ---
