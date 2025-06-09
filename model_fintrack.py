@@ -46,7 +46,7 @@ def predict_next_month_expense(last_n_days_data):
     Returns:
         tuple:
             - prediksi_pengeluaran (float)
-            - rekomendasi_budget (float)
+            - budget_rp (float)
     """
 
     if model is None:
@@ -66,9 +66,7 @@ def predict_next_month_expense(last_n_days_data):
     if len(last_n_days_data) >= 30:
         data_terakhir_30hari = last_n_days_data[-30:]
     else:
-        avg = np.mean(last_n_days_data)
-        padding = [avg] * (30 - len(last_n_days_data))
-        data_terakhir_30hari = padding + last_n_days_data
+        data_terakhir_30hari = [0] * (30 - len(last_n_days_data)) + last_n_days_data
 
     # Scaling dan reshape
     arr = np.array(data_terakhir_30hari).reshape(-1, 1)
@@ -80,14 +78,17 @@ def predict_next_month_expense(last_n_days_data):
     pred_rp = scaler.inverse_transform(pred_scaled)[0][0]
 
     # Rekomendasi budget (tambah 10%)
-    rekomendasi_budget = pred_rp * 1.1
+    budget_rp = pred_rp * 1.1
 
-    return pred_rp, rekomendasi_budget
+    return pred_rp, budget_rp
 
 # --- Tes lokal ---
 if __name__ == "__main__":
     print("\n--- Pengujian model_fintrack.py ---")
-    sample_data = [25000, 30000, 28000] * 11  # total 33 hari
+    # sample_data = [25000, 30000, 28000] * 11  
+    sample_data = [0, 191100, 0, 558715, 402666, 0, 751196, 169118, 0, 187833,  
+                    294365, 157361, 227050, 720798, 164311, 526255, 191603, 514564, 191100, 454604,  
+                    555158, 187833, 303180, 391541, 542234, 580565, 454604, 383170, 366019, 369494]
     pred_rp, budget_rp = predict_next_month_expense(sample_data)
 
     if pred_rp is not None and budget_rp is not None:
