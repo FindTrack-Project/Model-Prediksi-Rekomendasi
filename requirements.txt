@@ -5,3 +5,6 @@ seaborn~=0.13
 matplotlib~=3.8
 scikit-learn~=1.4
 xgboost~=2.0
+flask # Untuk aplikasi Flask API Anda
+boto3 # Untuk interaksi dengan Cloudflare R2 (S3-compatible)
+joblib # Karena Anda menggunakan joblib.load() untuk scaler
